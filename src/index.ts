@@ -1,7 +1,7 @@
 import { PruneIRType } from "./ir"
 import { obj2GoStruct } from "./ir2go"
 
-import { promises as fs } from 'fs'
+import { promises as fs } from "fs"
 
 import $ from "transform-ts"
 import glob from "glob"
@@ -19,7 +19,9 @@ const configSchema = $.obj({
 
 const main = async () => {
 	const configFile = process.argv[2]
-	const config = configSchema.transformOrThrow(JSON.parse((await fs.readFile(configFile)).toString('utf-8')))
+	const config = configSchema.transformOrThrow(
+		JSON.parse((await fs.readFile(configFile)).toString("utf-8"))
+	)
 
 	const files = await new Promise<string[]>((res, rej) =>
 		glob(config.glob, (err, files) => (err ? rej(err) : res(files)))
@@ -35,15 +37,19 @@ const main = async () => {
 				usePointerField:
 					config.usePointerField === undefined ||
 					config.usePointerField === null
-						? true
+						? undefined
 						: config.usePointerField,
 				usePointerFieldForRequired:
 					config.usePointerFieldForRequired === undefined ||
 					config.usePointerFieldForRequired === null
-						? true
+						? undefined
 						: config.usePointerFieldForRequired,
 			},
-			...files.map((f) => require(f))
+			...(await Promise.all(
+				files.map((f) =>
+					fs.readFile(f).then((b) => JSON.parse(b.toString()))
+				)
+			))
 		)
 	)
 }

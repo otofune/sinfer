@@ -37,10 +37,10 @@ export const ir2gostruct = (
 	ir: UnifiedIR,
 	{
 		additionalAcronyms = [],
-		usePointerField = true,
+		usePointerField = false,
 		usePointerFieldForRequired = true,
 		tagTemplate = `json:"%name%"`,
-		tagRequiredTemplate = `json:"%name%" jv:"nonnil"`,
+		tagRequiredTemplate = `json:"%name%"`,
 	}: IR2GoStructOption
 ): string => {
 	const options = {
@@ -65,7 +65,7 @@ export const ir2gostruct = (
 			// ポインタにして null や undefined だったかどうかを判別できるようにする
 			// 必須だったら `jv:"nonnil"` をつける
 			return `struct {
-				${PADDING}${Object.entries(ir.fields)
+${PADDING}${Object.entries(ir.fields)
 				.map(([k, v]) =>
 					[
 						convert2GoPublicFieldName(k, additionalAcronyms),
@@ -85,7 +85,7 @@ export const ir2gostruct = (
 				.join("\n")
 				.split("\n")
 				.join("\n" + PADDING)}
-				}`
+}`
 	}
 }
 
