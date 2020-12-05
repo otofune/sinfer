@@ -4,7 +4,7 @@ Infer types from structures like JSON and convert into Go source code
 
 ## Getting Started
 
-0. Correct JSON files
+0. Collect JSON files
 
 ```sh
 cat > a.json <<EOF
